@@ -28,6 +28,7 @@ with open(
             receivers.append(str(email.split(",")[11]))
         elif str(email.split(",")[11]) == blockedAt:
             blockPassed = True
+print("commit")
 
 
 sent_from = gmail_user
