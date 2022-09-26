@@ -7,7 +7,7 @@ from datetime import date, timedelta
 from math import ceil
 
 WUSHU_MEMBERS = []
-with open("\members-wushu-l.csv", "r") as file:
+with open(".\members-wushu-l.csv", "r") as file:
     br = file.readlines()
     for email in br:
         WUSHU_MEMBERS.append(str(email.split(",")[11]))
@@ -36,12 +36,12 @@ class WushuEmail:
         mondayDayMonth = str(today.month) + "/" + str(today.day)
         fridayDayMonth = str(friday.month) + "/" + str(friday.day)
         saturdayDayMonth = str(saturday.month) + "/" + str(saturday.day)
-        self.msg["Subject"] = "Cornell Wushu Week of {}/{}!".format(
+        self.email_message["Subject"] = "Cornell Wushu Week of {}/{}!".format(
             today.month, today.day
         )
-        self.msg["From"] = "cornellwushu@gmail.com"
-        self.msg["To"] = "cornellwushu@gmail.com"
-        html = open(f"\templates\{self.type}.html", "r").read()
+        self.email_message["From"] = "cornellwushu@gmail.com"
+        self.email_message["To"] = "cornellwushu@gmail.com"
+        html = open(f"./templates/{self.type}.html", "r").read()
         html = html.replace("{{ monday }}", mondayDayMonth)
         html = html.replace("{{ friday }}", fridayDayMonth)
         html = html.replace("{{ saturday }}", saturdayDayMonth)
@@ -53,11 +53,11 @@ class WushuEmail:
             "C:/Users\praty\Desktop\cornell-wushu\cornell-wushu\src\images\wushu.gif",
             "rb",
         )
-        fpFB = open("images\facebook.png", "rb")
-        fpIG = open("images\instagram.png", "rb")
-        fpGC = open("images\google-calendar.png", "rb")
-        fpWB = open("images\logo.jpg", "rb")
-        fpYT = open("images\youtube.png", "rb")
+        fpFB = open(".\images/facebook.png", "rb")
+        fpIG = open(".\images/instagram.png", "rb")
+        fpGC = open(".\images/google-calendar.png", "rb")
+        fpWB = open(".\images/logo.jpg", "rb")
+        fpYT = open(".\images/youtube.png", "rb")
         msgGIF = MIMEImage(fpGIF.read())
         msgFB = MIMEImage(fpFB.read())
         msgIG = MIMEImage(fpIG.read())
@@ -86,20 +86,23 @@ class WushuEmail:
     def send_email(self, receivers):
         num_receivers = len(receivers)
         for i in range(ceil(num_receivers / 100)):
-            to = receivers[:99]
+            to = receivers[:100]
             smtp_server = smtplib.SMTP("smtp.gmail.com", 587)
             smtp_server.starttls()
-            smtp_server.login(self.gmail_usernamer, self.gmail_password)
+            smtp_server.login(self.gmail_username, self.gmail_password)
             smtp_server.sendmail(
                 self.gmail_username, to, self.email_message.as_string()
             )
             smtp_server.close()
-            receivers = receivers[99:]
-
+            try:
+                receivers = receivers[100:]
+            except:
+                break
+            print("Email Sent Succesfully!")
 
 if __name__ == "__main__":
-    email = WushuEmail(gmail_user, gmail_password, "social")
-    testing = True
+    email = WushuEmail(gmail_user, gmail_password, "correction")
+    testing = False
     if testing:
         email.send_email(["ps2245@cornell.edu"])
     else:
