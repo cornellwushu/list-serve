@@ -16,7 +16,7 @@ from datetime import date, timedelta
 gmail_user = "cornellwushu@gmail.com"
 gmail_password = "gkesxwbfpifgprek"
 
-blockedAt = "zmj6@cornell.edu"
+blockedAt = "mw774@cornell.edu"
 blockPassed = False
 receivers = []
 with open(
@@ -28,6 +28,7 @@ with open(
             receivers.append(str(email.split(",")[11]))
         elif str(email.split(",")[11]) == blockedAt:
             blockPassed = True
+        #receivers.append(str(email.split(",")[11]))
 
 sent_from = gmail_user
 to = ["ps2245@cornell.edu"]
@@ -50,40 +51,33 @@ fpIG = open("C:/Users\praty\Desktop\cornell-wushu\list-serve\instagram.png", "rb
 fpGC = open("C:/Users\praty\Desktop\cornell-wushu\list-serve\google-calendar.png", "rb")
 fpWB = open("C:/Users\praty\Desktop\cornell-wushu\list-serve\logo.jpg", "rb")
 fpYT = open("C:/Users\praty\Desktop\cornell-wushu\list-serve\youtube.png", "rb")
-fpPF = open(
-    "C:/Users\praty\Desktop\cornell-wushu\list-serve\performance-image.jpeg", "rb"
-)
 msgGIF = MIMEImage(fpGIF.read())
 msgFB = MIMEImage(fpFB.read())
 msgIG = MIMEImage(fpIG.read())
 msgGC = MIMEImage(fpGC.read())
 msgWB = MIMEImage(fpWB.read())
 msgYT = MIMEImage(fpYT.read())
-msgPF = MIMEImage(fpPF.read())
 fpGIF.close()
 fpFB.close()
 fpIG.close()
 fpGC.close()
 fpWB.close()
 fpYT.close()
-fpPF.close()
 msgGIF.add_header("Content-ID", "<gif>")
 msgFB.add_header("Content-ID", "<facebook>")
 msgIG.add_header("Content-ID", "<instagram>")
 msgGC.add_header("Content-ID", "<google-calendar>")
 msgWB.add_header("Content-ID", "<website>")
 msgYT.add_header("Content-ID", "<youtube>")
-msgPF.add_header("Content-ID", "<performance>")
 msg.attach(msgGIF)
 msg.attach(msgFB)
 msg.attach(msgIG)
 msg.attach(msgGC)
 msg.attach(msgWB)
 msg.attach(msgYT)
-msg.attach(msgPF)
 
 # Create the body of the message (a plain-text and an HTML version).
-html = open("template.html", "r").read()
+html = open("weekly.html", "r").read()
 html = html.replace("{{ monday }}", mondayDayMonth)
 html = html.replace("{{ friday }}", fridayDayMonth)
 html = html.replace("{{ saturday }}", saturdayDayMonth)
