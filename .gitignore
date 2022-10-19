@@ -1,3 +1,7 @@
 /members-wushu-l.csv
 /.vscode
 /__pycache__
+/templates
+venv
+.vercel
+.env

@@ -1,19 +1,20 @@
+import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email import encoders
+from dotenv import load_dotenv
 from datetime import date, timedelta
 from math import ceil
 
 WUSHU_MEMBERS = []
-with open(".\members-wushu-l.csv", "r") as file:
+with open("./members-wushu-l.csv", "r") as file:
     br = file.readlines()
     for email in br:
         WUSHU_MEMBERS.append(str(email.split(",")[11]))
 
-gmail_user = "cornellwushu@gmail.com"
-gmail_password = "gkesxwbfpifgprek"
+load_dotenv()
 
 
 class WushuEmail:
@@ -30,19 +31,23 @@ class WushuEmail:
         return msg
 
     def design_email_from_template(self):
-        today = date.today()
-        friday = today + timedelta(days=4)
-        saturday = today + timedelta(days=5)
-        mondayDayMonth = str(today.month) + "/" + str(today.day)
+        now = date.today()
+        monday = now - timedelta(days=now.weekday())
+        thursday = monday + timedelta(days=3)
+        friday = monday + timedelta(days=4)
+        saturday = monday + timedelta(days=5)
+        mondayDayMonth = str(monday.month) + "/" + str(monday.day)
+        thursdayDayMonth = str(thursday.month) + "/" + str(thursday.day)
         fridayDayMonth = str(friday.month) + "/" + str(friday.day)
         saturdayDayMonth = str(saturday.month) + "/" + str(saturday.day)
         self.email_message["Subject"] = "Cornell Wushu Week of {}/{}!".format(
-            today.month, today.day
+            monday.month, monday.day
         )
         self.email_message["From"] = "cornellwushu@gmail.com"
         self.email_message["To"] = "cornellwushu@gmail.com"
         html = open(f"./templates/{self.type}.html", "r").read()
         html = html.replace("{{ monday }}", mondayDayMonth)
+        html = html.replace("{{ thursday }}", thursdayDayMonth)
         html = html.replace("{{ friday }}", fridayDayMonth)
         html = html.replace("{{ saturday }}", saturdayDayMonth)
         body = MIMEText(html, "html")
@@ -98,10 +103,13 @@ class WushuEmail:
                 receivers = receivers[100:]
             except:
                 break
-            print("Email Sent Succesfully!")
+        print("Email Sent Succesfully!")
+
 
 if __name__ == "__main__":
-    email = WushuEmail(gmail_user, gmail_password, "correction")
+    email = WushuEmail(
+        os.environ.get("GMAIL_USER"), os.environ.get("GMAIL_PASSWORD"), "weekly"
+    )
     testing = False
     if testing:
         email.send_email(["ps2245@cornell.edu"])
