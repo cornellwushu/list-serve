@@ -7,6 +7,7 @@ from email import encoders
 from dotenv import load_dotenv
 from datetime import date, timedelta
 from math import ceil
+import sys
 
 WUSHU_MEMBERS = []
 with open("./members-wushu-l.csv", "r") as file:
@@ -36,10 +37,12 @@ class WushuEmail:
         thursday = monday + timedelta(days=3)
         friday = monday + timedelta(days=4)
         saturday = monday + timedelta(days=5)
+        sunday = monday + timedelta(days=6)
         mondayDayMonth = str(monday.month) + "/" + str(monday.day)
         thursdayDayMonth = str(thursday.month) + "/" + str(thursday.day)
         fridayDayMonth = str(friday.month) + "/" + str(friday.day)
         saturdayDayMonth = str(saturday.month) + "/" + str(saturday.day)
+        sundayDayMonth = str(sunday.month) + "/" + str(sunday.day)
         self.email_message["Subject"] = "Cornell Wushu Week of {}/{}!".format(
             monday.month, monday.day
         )
@@ -50,38 +53,31 @@ class WushuEmail:
         html = html.replace("{{ thursday }}", thursdayDayMonth)
         html = html.replace("{{ friday }}", fridayDayMonth)
         html = html.replace("{{ saturday }}", saturdayDayMonth)
+        html = html.replace("{{ sunday }}", sundayDayMonth)
         body = MIMEText(html, "html")
         self.email_message.attach(body)
 
     def attach_images(self):
-        fpGIF = open(
-            "C:/Users\praty\Desktop\cornell-wushu\cornell-wushu\src\images\wushu.gif",
-            "rb",
-        )
         fpFB = open(".\images/facebook.png", "rb")
         fpIG = open(".\images/instagram.png", "rb")
         fpGC = open(".\images/google-calendar.png", "rb")
         fpWB = open(".\images/logo.jpg", "rb")
         fpYT = open(".\images/youtube.png", "rb")
-        msgGIF = MIMEImage(fpGIF.read())
         msgFB = MIMEImage(fpFB.read())
         msgIG = MIMEImage(fpIG.read())
         msgGC = MIMEImage(fpGC.read())
         msgWB = MIMEImage(fpWB.read())
         msgYT = MIMEImage(fpYT.read())
-        fpGIF.close()
         fpFB.close()
         fpIG.close()
         fpGC.close()
         fpWB.close()
         fpYT.close()
-        msgGIF.add_header("Content-ID", "<gif>")
         msgFB.add_header("Content-ID", "<facebook>")
         msgIG.add_header("Content-ID", "<instagram>")
         msgGC.add_header("Content-ID", "<google-calendar>")
         msgWB.add_header("Content-ID", "<website>")
         msgYT.add_header("Content-ID", "<youtube>")
-        self.email_message.attach(msgGIF)
         self.email_message.attach(msgFB)
         self.email_message.attach(msgIG)
         self.email_message.attach(msgGC)
@@ -110,8 +106,10 @@ if __name__ == "__main__":
     email = WushuEmail(
         os.environ.get("GMAIL_USER"), os.environ.get("GMAIL_PASSWORD"), "weekly"
     )
-    testing = False
-    if testing:
-        email.send_email(["ps2245@cornell.edu"])
-    else:
+    try:
+        if sys.argv[1] == "testing":
+            email.send_email(["ps2245@cornell.edu"])
+        else:
+            email.send_email(WUSHU_MEMBERS)
+    except:
         email.send_email(WUSHU_MEMBERS)
